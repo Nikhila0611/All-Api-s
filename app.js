@@ -29,20 +29,16 @@ const port = process.env.PORT || 8000;
 //   console.log('Connected to MongoDB');
 // });
 
-const uri = 'mongodb+srv://nikhilareddygandlapati:7ndKiLFu3cDEbxvQ@cluster0.17ofit6.mongodb.net/?retryWrites=true&w=majority';
+const uri='mongodb+srv://nikhilareddygandlapati:IBg3dA2kbGrS1bQz@cluster0.l0tm7qe.mongodb.net/?retryWrites=true&w=majority';
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  
-});
-
+  });
 const db = mongoose.connection;
-
 db.on('error', (error) => {
   console.error('Error connecting to MongoDB Atlas with Mongoose:', error);
 });
-
 db.once('open', () => {
   console.log('Connected to MongoDB Atlas with Mongoose');
 });
@@ -105,9 +101,9 @@ app.use('/api', appRoute);
 app.use('/api',adminRoute)
 
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'index.html'));
+// });
 
 
 app.post('/json-payload', (req, res) => {
