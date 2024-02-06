@@ -49,7 +49,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(fileUpload({ createParentPath: true }));
 app.use(express.json());
-app.use('/api',pincodeRoute);
 app.use(express. urlencoded({extended:false}))
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -98,7 +97,8 @@ app.use('/api', router);
 app.use('/api', shipmentRoute);
 app.use('/api',paymentRoute);
 app.use('/api', appRoute);
-app.use('/api',adminRoute)
+app.use('/api',adminRoute);
+app.use('/api',pincodeRoute);
 
 
 // app.get('/', (req, res) => {
