@@ -19,7 +19,7 @@ const { MongoClient } = require('mongodb');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
  
 // // Connect to MongoDB
 // mongoose.connect('mongodb://localhost:27017/joprodexs', { useNewUrlParser: true, useUnifiedTopology: true });
