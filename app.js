@@ -29,7 +29,7 @@ const port = process.env.PORT || 8080;
 //   console.log('Connected to MongoDB');
 // });
 
-const uri='mongodb+srv://nikhilareddygandlapati:IBg3dA2kbGrS1bQz@cluster0.l0tm7qe.mongodb.net/?retryWrites=true&w=majority';
+const uri=''mongodb+srv://nikhilareddygandlapati:4tCdRQPkFeEQpSCv@cluster0.gpu5ybm.mongodb.net/?retryWrites=true&w=majority';
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
