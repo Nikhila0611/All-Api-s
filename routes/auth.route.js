@@ -52,24 +52,32 @@ router.post('/login',(req,res)=>{
     })
 });
 
-router.get('/profile',checkAuth,(req,res)=>{
-    const userId=req.userData.userId;
-    User.findById(userId).exec().then((result)=>{
-        res.json({success:true,data:result})
-    }).catch((err)=>{
-        res.json({success:false,message:"server error"})
-    })
-})
+router.get('/profile/:userId', checkAuth, (req, res) => {
+    const userId = req.params.userId;
+ 
+    User.findById(userId)
+        .exec()
+        .then((result) => {
+            if (result) {
+                res.json({ success: true, data: result });
+            } else {
+                res.status(404).json({ success: false, message: "User not found" });
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({ success: false, message: "Server error" });
+        });
+});
 
-router.get('/success', async (req, res, next) => {
+router.get('/success', async (req, res) => {
     try {
-        const user = await User.find({});
-        res.status(200).json({ data: user, message: 'Authentication login successfully' });
+        const users = await User.find({});
+        res.status(200).json({ success: true, data: users, message: 'Authentication login successfully' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ success: false, error: err.message });
     }
 });
- 
-module.exports =router;
 
+module.exports = router;
