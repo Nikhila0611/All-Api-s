@@ -79,5 +79,16 @@ router.get('/success', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+router.get("/api/getByuserid",(req,res)=>{
+    const userId = req.params.userId;
+    User.findOne(userId,(err,data)=>{
+        if (err){
+            console.log(err);
+        }
+        else{
+            res.send(data)
+        }
+    })
 
+})
 module.exports = router;
