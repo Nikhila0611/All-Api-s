@@ -1,38 +1,44 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const twilio =require('twilio')
 const app = express();
 const ejs = require("ejs");
 require("dotenv").config();
 const cors = require('cors')
-const twilio =require('twilio')
 const authRoute = require('./routes/auth.route');
 const router = require('./routes/router');
-const pincodeRoute = require('./routes/pincodeRoute.js');
 const shipmentRoute = require('./routes/shipmentRoute');
 const paymentRoute = require('./routes/paymentRoute');
 const appRoute = require('./routes/route');
 const appController = require('./mailer/controller/appController');
-const adminRoute = require('./routes/adminRoute');      
+const pincodeRoute = require('./routes/pincodeRoute.js');
+
 const bodyParser = require('body-parser');
-const { MongoClient } = require('mongodb');
 const fileUpload = require('express-fileupload');
 const path = require('path');
 
 const port = process.env.PORT || 8080;
- 
-// // Connect to MongoDB
-// mongoose.connect('mongodb://localhost:27017/joprodexs', { useNewUrlParser: true, useUnifiedTopology: true });
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-// db.once('open', () => {
-//   console.log('Connected to MongoDB');
-// });
 
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin',"*");
+  res.header('Access-Control-Allow-Headers', true);
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  next();
+});
+// Connect to MongoDB
+// mongoose.connect('mongodb://localhost:27017/data', );
+// const db = mongoose.connection;
+
+// db.on('error', console.error.bind(console, 'MongoDB connection error',{ useNewUrlParser: true, useUnifiedTopology: true }));
+// db.once('open', () => {
+//     console.log('Connected to MongoDB');
+// });
 const uri='mongodb+srv://nikhilareddygandlapati:fO8kXWN8aMJKyIyf@cluster0.emcygxj.mongodb.net/?retryWrites=true&w=majority';
+
 mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  
   });
 const db = mongoose.connection;
 db.on('error', (error) => {
@@ -42,35 +48,24 @@ db.once('open', () => {
   console.log('Connected to MongoDB Atlas with Mongoose');
 });
 
-
-
+app.use(express.json()); 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(fileUpload({ createParentPath: true }));
-app.use(express.json());
+
 app.use(express. urlencoded({extended:false}))
-
-
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', "*");
-  res.header('Access-Control-Allow-Headers', true);
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    next();
-});
 var client = new twilio(accountSid,authToken)
 var otp =Math.floor(100000+Math.random()*90000);
 var userEnteredOTP=''
 console.log(otp)
 app.post('/sendotp',(req,res)=>{
     client.messages.create({
-        body:`Hello Nikhila, your OTP is: ${otp}`,
-        to:'+919963760431',
-        from:'+13202454091'
+      body:`Hello Nikhila, your OTP is: ${otp}`,
+              to:'+919963760431',
+              from:'+13202454091'
+        
     })
     .then((message)=>{
         console.log('message sent:', message.sid);
@@ -82,29 +77,27 @@ app.post('/sendotp',(req,res)=>{
     })
 })    
 app.post('/verifyotp', (req, res) => {
-  userEnteredOTP = req.body.userEnteredOTP;
+    userEnteredOTP = req.body.userEnteredOTP;
 
-  if (userEnteredOTP == otp.toString()) {
-      res.status(200).send('OTP verification successful');
-      console.log("valid otp");
-  } else {
-      res.status(400).send('Invalid OTP. Please Try Again.');
-  }
+    if (userEnteredOTP == otp.toString()) {
+        res.status(200).send('OTP verification successful');
+        console.log("valid otp");
+    } else {
+        res.status(400).send('Invalid OTP. Please Try Again.');
+    }
 });
-
 
 app.use('/api', authRoute);
 app.use('/api', router);
 app.use('/api', shipmentRoute);
-app.use('/api',paymentRoute);
+app.use('/api', paymentRoute);
 app.use('/api', appRoute);
-app.use('/api',adminRoute);
 app.use('/api',pincodeRoute);
+app.use(cors());
+app.use(bodyParser.json());
+app.use(fileUpload({ createParentPath: true }));
 
 
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'index.html'));
-// });
 
 
 app.post('/json-payload', (req, res) => {
@@ -141,6 +134,13 @@ app.post('/upload', (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+    res.send('welcome to snv');
+});
+
+
+
+
 const userSchema = new Schema({
   name: { type: String, unique: true },
   email: { type: String, unique: true },
@@ -169,7 +169,7 @@ const crudSchema = new Schema({
 
 const Crud = mongoose.model('Crud', crudSchema);
 
-// Define Shipment Schema
+
 const shipmentSchema = new Schema({
   order_Id: { type: Number, unique: true },
   customer_Name: { type: String, unique: true },
@@ -205,7 +205,7 @@ app.get('/created', async (req, res) => {
       email: 'john@example.com',
       mobile: 9898274754,
       password: 'Indu',
-      companyname: 'snvsolutions',keys
+      companyname: 'snvsolutions',
     });
 
     const newCrud = await Crud.create({
@@ -237,6 +237,7 @@ app.get('/created', async (req, res) => {
       product_name: 'ewyyueywyu',
       description: 'gfdf',
       user: newUser._id,
+
       crud: newCrud._id,
       shipment: newShipment._id,
     });
@@ -281,12 +282,6 @@ app.get('/users', async (req, res) => {
   }
 });
 
-
- app.get('/',(req,res)=>{
-  res.send('welcome to snv')
- })
-//Start Server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
-
+  console.log(`Server is running on http://localhost:${port}`);
+})
